@@ -7,8 +7,8 @@ import (
 )
 
 type haveReceivedMatcher struct {
-	functionToMatch         string
-	functionWasInvokedCount int
+	functionToMatch string
+	expected        invocations.Recorder
 }
 
 func (m *haveReceivedMatcher) Match(expected interface{}) (bool, error) {
@@ -17,8 +17,8 @@ func (m *haveReceivedMatcher) Match(expected interface{}) (bool, error) {
 		return false, expectedDoesNotImplementInterfaceError(expected)
 	}
 
-	m.functionWasInvokedCount = len(fake.Invocations()[m.functionToMatch])
-	return m.functionWasInvokedCount > 0, nil
+	m.expected = fake
+	return len(fake.Invocations()[m.functionToMatch]) > 0, nil
 }
 
 func (m *haveReceivedMatcher) FailureMessage(interface{}) string {
@@ -26,5 +26,6 @@ func (m *haveReceivedMatcher) FailureMessage(interface{}) string {
 }
 
 func (m *haveReceivedMatcher) NegatedFailureMessage(interface{}) string {
-	return fmt.Sprintf("Expected to not have received '%s', but it was invoked %d times", m.functionToMatch, m.functionWasInvokedCount)
+	invocationCount := invocations.CountTotalInvocations(m.expected.Invocations())
+	return fmt.Sprintf("Expected to not have received '%s', but it was invoked %d times", m.functionToMatch, invocationCount)
 }

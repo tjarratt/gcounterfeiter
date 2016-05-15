@@ -7,6 +7,7 @@ import (
 )
 
 type haveReceivedNothingMatcher struct {
+	expected                invocations.Recorder
 	functionWasInvokedCount int
 }
 
@@ -16,14 +17,14 @@ func (m *haveReceivedNothingMatcher) Match(expected interface{}) (bool, error) {
 		return false, expectedDoesNotImplementInterfaceError(expected)
 	}
 
-	m.functionWasInvokedCount = len(fake.Invocations())
-	return m.functionWasInvokedCount != 0, nil
+	m.expected = fake
+	return len(fake.Invocations()) != 0, nil
 }
 
-func (m *haveReceivedNothingMatcher) FailureMessage(expected interface{}) string {
-	return fmt.Sprintf("Expected to have received nothing, but it received %d invocations", m.functionWasInvokedCount)
+func (m *haveReceivedNothingMatcher) FailureMessage(interface{}) string {
+	return fmt.Sprintf("Expected to have received nothing, but it received %d invocations", invocations.CountTotalInvocations(m.expected.Invocations()))
 }
 
-func (m *haveReceivedNothingMatcher) NegatedFailureMessage(expected interface{}) string {
+func (m *haveReceivedNothingMatcher) NegatedFailureMessage(interface{}) string {
 	return "Expected to have received at least one invocation, but there were none"
 }
