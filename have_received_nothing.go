@@ -1,13 +1,17 @@
 package gcounterfeiter
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/tjarratt/gcounterfeiter/invocations"
+)
 
 type haveReceivedNothingMatcher struct {
 	functionWasInvokedCount int
 }
 
 func (m *haveReceivedNothingMatcher) Match(expected interface{}) (bool, error) {
-	fake, ok := expected.(InvocationRecorder)
+	fake, ok := expected.(invocations.Recorder)
 	if !ok {
 		return false, expectedDoesNotImplementInterfaceError(expected)
 	}

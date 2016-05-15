@@ -14,7 +14,3 @@ func HaveReceived(args ...string) types.GomegaMatcher {
 		return &userDoneGoofedMatcher{howMany: len(args)}
 	}
 }
-
-type InvocationRecorder interface {
-	Invocations() map[string][][]interface{}
-}

@@ -1,6 +1,10 @@
 package gcounterfeiter
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/tjarratt/gcounterfeiter/invocations"
+)
 
 type haveReceivedMatcher struct {
 	functionToMatch         string
@@ -8,7 +12,7 @@ type haveReceivedMatcher struct {
 }
 
 func (m *haveReceivedMatcher) Match(expected interface{}) (bool, error) {
-	fake, ok := expected.(InvocationRecorder)
+	fake, ok := expected.(invocations.Recorder)
 	if !ok {
 		return false, expectedDoesNotImplementInterfaceError(expected)
 	}

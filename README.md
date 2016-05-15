@@ -17,8 +17,7 @@ Expect(myFake).To(HaveReceived("Something").With("arg1", "arg2"))
 This actually works with any object that implements an "invocation recording" interface.
 
 ```go
-type InvocationRecording interface{
+type Recorder interface{
   Invocations() map[string][][]interface{}
 }
 ```
-
