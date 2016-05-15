@@ -19,6 +19,7 @@ var _ = Describe("HaveReceived", func() {
 	It("initially has no recorded invocations", func() {
 		Expect(fake).ToNot(HaveReceived("Something"))
 		Expect(fake).ToNot(HaveReceived("TakesAParameter"))
+		Expect(fake).ToNot(HaveReceived("TakesAParameter").With(Equal("anything-at-all")))
 	})
 
 	It("can verify that no function calls were made", func() {
@@ -36,6 +37,47 @@ var _ = Describe("HaveReceived", func() {
 
 		It("should no longer report that no function calls were made", func() {
 			Expect(fake).To(HaveReceived())
+		})
+	})
+
+	Describe("argument matching", func() {
+		BeforeEach(func() {
+			fake.TakesAParameter("you-bet-it-does")
+		})
+
+		It("allows you to verify that the correct arguments were passed in", func() {
+			Expect(fake).To(HaveReceived("TakesAParameter").With(Equal("you-bet-it-does")))
+			Expect(fake).ToNot(HaveReceived("TakesAParameter").With(Equal("whoops")))
+		})
+
+		Context("when too many arguments are provided", func() {
+			var subject types.GomegaMatcher
+
+			BeforeEach(func() {
+				subject = HaveReceived("TakesAParameter").With(Equal("you-bet-it-does")).AndWith(Equal("whoops"))
+			})
+
+			It("should tell the user they goofed", func() {
+				ok, err := subject.Match(fake)
+				Expect(ok).To(BeFalse())
+				Expect(err.Error()).To(ContainSubstring("Too many arguments provided for 'TakesAParameter'. Expected 1 but received 2"))
+			})
+		})
+
+		Context("when too few arguments are provided", func() {
+			var subject types.GomegaMatcher
+
+			BeforeEach(func() {
+				subject = HaveReceived("TakesThreeParameters").With(Equal("whoops"))
+			})
+
+			It("should tell the user they goofed", func() {
+				fake.TakesThreeParameters("", "", "")
+
+				ok, err := subject.Match(fake)
+				Expect(ok).To(BeFalse())
+				Expect(err.Error()).To(ContainSubstring("Too few arguments provided for 'TakesThreeParameters'. Expected 3 but received 1"))
+			})
 		})
 	})
 
@@ -62,6 +104,21 @@ var _ = Describe("HaveReceived", func() {
 				fake.Something()
 				subject.Match(fake)
 				Expect(subject.FailureMessage(fake)).To(ContainSubstring("to have received nothing, but it received 1 invocations"))
+			})
+		})
+
+		Context("when the user specifies parameters to match", func() {
+			BeforeEach(func() {
+				subject = HaveReceived("TakesThreeParameters").
+					With(Equal("a")).
+					AndWith(Equal("b")).
+					AndWith(Equal("c"))
+			})
+
+			It("should tell the user which parameter failed to match", func() {
+				fake.TakesThreeParameters("a", "b", "whoops")
+				subject.Match(fake)
+				Expect(subject.FailureMessage(fake)).To(ContainSubstring("Expected to receive 'TakesThreeParameters' (and it did!) but the 3 argument failed to match"))
 			})
 		})
 	})
@@ -91,6 +148,21 @@ var _ = Describe("HaveReceived", func() {
 				Expect(subject.NegatedFailureMessage(fake)).To(ContainSubstring("to have received at least one invocation, but there were none"))
 			})
 		})
+
+		Context("when the user specifies parameters to match", func() {
+			BeforeEach(func() {
+				subject = HaveReceived("TakesThreeParameters").
+					With(Equal("a")).
+					AndWith(Equal("b")).
+					AndWith(Equal("c"))
+			})
+
+			It("should tell the user that the invocation occurred, despite their stating it should not occur", func() {
+				fake.TakesThreeParameters("a", "b", "c")
+				subject.Match(fake)
+				Expect(subject.NegatedFailureMessage(fake)).To(ContainSubstring("to not receive 'TakesThreeParameters' (with exact argument matching)"))
+			})
+		})
 	})
 
 	Context("when the user accidentally specifies too many arguments", func() {
@@ -118,6 +190,20 @@ var _ = Describe("HaveReceived", func() {
 			matches, err := matcher.Match(struct{}{})
 			Expect(matches).To(BeFalse())
 			Expect(err.Error()).To(ContainSubstring("does not conform to the 'InvocationRecorder' interface"))
+		})
+	})
+
+	Context("when the user accidentally combines the no-argument HaveReceived() with argument matching", func() {
+		var matcher types.GomegaMatcher
+
+		BeforeEach(func() {
+			matcher = HaveReceived().With(Equal("dang")).AndWith(Equal("You done goofed"))
+		})
+
+		It("should fail to match and tell the user they goofed", func() {
+			matches, err := matcher.Match(fake)
+			Expect(matches).To(BeFalse())
+			Expect(err.Error()).To(ContainSubstring("You cannot combine HaveReceived() with argument matching"))
 		})
 	})
 })

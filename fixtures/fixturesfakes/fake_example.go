@@ -16,16 +16,21 @@ type FakeExample struct {
 	takesAParameterArgsForCall []struct {
 		arg1 string
 	}
+	TakesThreeParametersStub        func(string, string, string)
+	takesThreeParametersMutex       sync.RWMutex
+	takesThreeParametersArgsForCall []struct {
+		arg1 string
+		arg2 string
+		arg3 string
+	}
 	invocations map[string][][]interface{}
 }
 
 func (fake *FakeExample) Something() {
 	fake.somethingMutex.Lock()
 	fake.somethingArgsForCall = append(fake.somethingArgsForCall, struct{}{})
-
 	fake.guard("Something")
 	fake.invocations["Something"] = append(fake.invocations["Something"], []interface{}{})
-
 	fake.somethingMutex.Unlock()
 	if fake.SomethingStub != nil {
 		fake.SomethingStub()
@@ -61,6 +66,33 @@ func (fake *FakeExample) TakesAParameterArgsForCall(i int) string {
 	fake.takesAParameterMutex.RLock()
 	defer fake.takesAParameterMutex.RUnlock()
 	return fake.takesAParameterArgsForCall[i].arg1
+}
+
+func (fake *FakeExample) TakesThreeParameters(arg1 string, arg2 string, arg3 string) {
+	fake.takesThreeParametersMutex.Lock()
+	fake.takesThreeParametersArgsForCall = append(fake.takesThreeParametersArgsForCall, struct {
+		arg1 string
+		arg2 string
+		arg3 string
+	}{arg1, arg2, arg3})
+	fake.guard("TakesThreeParameters")
+	fake.invocations["TakesThreeParameters"] = append(fake.invocations["TakesThreeParameters"], []interface{}{arg1, arg2, arg3})
+	fake.takesThreeParametersMutex.Unlock()
+	if fake.TakesThreeParametersStub != nil {
+		fake.TakesThreeParametersStub(arg1, arg2, arg3)
+	}
+}
+
+func (fake *FakeExample) TakesThreeParametersCallCount() int {
+	fake.takesThreeParametersMutex.RLock()
+	defer fake.takesThreeParametersMutex.RUnlock()
+	return len(fake.takesThreeParametersArgsForCall)
+}
+
+func (fake *FakeExample) TakesThreeParametersArgsForCall(i int) (string, string, string) {
+	fake.takesThreeParametersMutex.RLock()
+	defer fake.takesThreeParametersMutex.RUnlock()
+	return fake.takesThreeParametersArgsForCall[i].arg1, fake.takesThreeParametersArgsForCall[i].arg2, fake.takesThreeParametersArgsForCall[i].arg3
 }
 
 func (fake *FakeExample) Invocations() map[string][][]interface{} {

@@ -1,13 +1,21 @@
 package gcounterfeiter
 
-import "fmt"
+import (
+	"errors"
+
+	"github.com/onsi/gomega/types"
+)
 
 type userDoneGoofedMatcher struct {
-	howMany int
+	message string
+}
+
+func newUserDoneGoofedMatcher(message string) *userDoneGoofedMatcher {
+	return &userDoneGoofedMatcher{message: message}
 }
 
 func (m *userDoneGoofedMatcher) Match(interface{}) (bool, error) {
-	return false, fmt.Errorf("You provided too many arguments. Expected 0 or 1, but you provided %d", m.howMany)
+	return false, errors.New(m.message)
 }
 
 func (m *userDoneGoofedMatcher) FailureMessage(interface{}) string {
@@ -16,4 +24,12 @@ func (m *userDoneGoofedMatcher) FailureMessage(interface{}) string {
 
 func (m *userDoneGoofedMatcher) NegatedFailureMessage(interface{}) string {
 	return ""
+}
+
+func (m *userDoneGoofedMatcher) With(argumentMatcher types.GomegaMatcher) HaveReceivableMatcher {
+	return m
+}
+
+func (m *userDoneGoofedMatcher) AndWith(argumentMatcher types.GomegaMatcher) HaveReceivableMatcher {
+	return m
 }

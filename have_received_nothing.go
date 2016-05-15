@@ -3,6 +3,7 @@ package gcounterfeiter
 import (
 	"fmt"
 
+	"github.com/onsi/gomega/types"
 	"github.com/tjarratt/gcounterfeiter/invocations"
 )
 
@@ -28,3 +29,21 @@ func (m *haveReceivedNothingMatcher) FailureMessage(interface{}) string {
 func (m *haveReceivedNothingMatcher) NegatedFailureMessage(interface{}) string {
 	return "Expected to have received at least one invocation, but there were none"
 }
+
+func (m *haveReceivedNothingMatcher) With(argumentMatcher types.GomegaMatcher) HaveReceivableMatcher {
+	return newUserDoneGoofedMatcher(incorrectHaveReceivedAndWithUsageMessage)
+}
+
+func (m *haveReceivedNothingMatcher) AndWith(argumentMatcher types.GomegaMatcher) HaveReceivableMatcher {
+	return newUserDoneGoofedMatcher(incorrectHaveReceivedAndWithUsageMessage)
+}
+
+const incorrectHaveReceivedAndWithUsageMessage = `Aww shucks.
+
+You done goofed!
+You cannot combine HaveReceived() with argument matching.
+
+HaveReceived() on its own means "a test-double received ... some function".
+HaveReceived().With(Equal("something") would mean "a test-double received ... some function?, with the argument 'something'", which is probably not what you wanted.
+
+Perhaps you meant HaveReceived("SomeMethodToTest").With("my-special-argument") ?`
