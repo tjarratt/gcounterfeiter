@@ -22,8 +22,11 @@ type Recorder interface{
 }
 ```
 
-Requested Features
+Requested Features 
 ------------------
+
+(These would be good for new contributors)
+
 * I should be able to specify multiple arguments at once
   - e.g.: `Expect(myFake).To(HaveReceived("Something").With(Equal("my-arg", Equal(0)))`
 * I should be able to specify a number of times a function was invoked
