@@ -16,6 +16,16 @@ type FakeExample struct {
 	takesAParameterArgsForCall []struct {
 		arg1 string
 	}
+	TakesAnIntStub        func(int)
+	takesAnIntMutex       sync.RWMutex
+	takesAnIntArgsForCall []struct {
+		arg1 int
+	}
+	TakesAUint64Stub        func(uint64)
+	takesAUint64Mutex       sync.RWMutex
+	takesAUint64ArgsForCall []struct {
+		arg1 uint64
+	}
 	TakesThreeParametersStub        func(string, string, string)
 	takesThreeParametersMutex       sync.RWMutex
 	takesThreeParametersArgsForCall []struct {
@@ -66,6 +76,56 @@ func (fake *FakeExample) TakesAParameterArgsForCall(i int) string {
 	fake.takesAParameterMutex.RLock()
 	defer fake.takesAParameterMutex.RUnlock()
 	return fake.takesAParameterArgsForCall[i].arg1
+}
+
+func (fake *FakeExample) TakesAnInt(arg1 int) {
+	fake.takesAnIntMutex.Lock()
+	fake.takesAnIntArgsForCall = append(fake.takesAnIntArgsForCall, struct {
+		arg1 int
+	}{arg1})
+	fake.guard("TakesAnInt")
+	fake.invocations["TakesAnInt"] = append(fake.invocations["TakesAnInt"], []interface{}{arg1})
+	fake.takesAnIntMutex.Unlock()
+	if fake.TakesAnIntStub != nil {
+		fake.TakesAnIntStub(arg1)
+	}
+}
+
+func (fake *FakeExample) TakesAnIntCallCount() int {
+	fake.takesAnIntMutex.RLock()
+	defer fake.takesAnIntMutex.RUnlock()
+	return len(fake.takesAnIntArgsForCall)
+}
+
+func (fake *FakeExample) TakesAnIntArgsForCall(i int) int {
+	fake.takesAnIntMutex.RLock()
+	defer fake.takesAnIntMutex.RUnlock()
+	return fake.takesAnIntArgsForCall[i].arg1
+}
+
+func (fake *FakeExample) TakesAUint64(arg1 uint64) {
+	fake.takesAUint64Mutex.Lock()
+	fake.takesAUint64ArgsForCall = append(fake.takesAUint64ArgsForCall, struct {
+		arg1 uint64
+	}{arg1})
+	fake.guard("TakesAUint64")
+	fake.invocations["TakesAUint64"] = append(fake.invocations["TakesAUint64"], []interface{}{arg1})
+	fake.takesAUint64Mutex.Unlock()
+	if fake.TakesAUint64Stub != nil {
+		fake.TakesAUint64Stub(arg1)
+	}
+}
+
+func (fake *FakeExample) TakesAUint64CallCount() int {
+	fake.takesAUint64Mutex.RLock()
+	defer fake.takesAUint64Mutex.RUnlock()
+	return len(fake.takesAUint64ArgsForCall)
+}
+
+func (fake *FakeExample) TakesAUint64ArgsForCall(i int) uint64 {
+	fake.takesAUint64Mutex.RLock()
+	defer fake.takesAUint64Mutex.RUnlock()
+	return fake.takesAUint64ArgsForCall[i].arg1
 }
 
 func (fake *FakeExample) TakesThreeParameters(arg1 string, arg2 string, arg3 string) {

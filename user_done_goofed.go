@@ -1,10 +1,6 @@
 package gcounterfeiter
 
-import (
-	"errors"
-
-	"github.com/onsi/gomega/types"
-)
+import "errors"
 
 type userDoneGoofedMatcher struct {
 	message string
@@ -26,10 +22,10 @@ func (m *userDoneGoofedMatcher) NegatedFailureMessage(interface{}) string {
 	return ""
 }
 
-func (m *userDoneGoofedMatcher) With(argumentMatcher types.GomegaMatcher) HaveReceivableMatcher {
+func (m *userDoneGoofedMatcher) With(_ interface{}) HaveReceivableMatcher {
 	return m
 }
 
-func (m *userDoneGoofedMatcher) AndWith(argumentMatcher types.GomegaMatcher) HaveReceivableMatcher {
+func (m *userDoneGoofedMatcher) AndWith(_ interface{}) HaveReceivableMatcher {
 	return m
 }

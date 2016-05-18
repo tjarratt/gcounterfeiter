@@ -43,11 +43,20 @@ var _ = Describe("HaveReceived", func() {
 	Describe("argument matching", func() {
 		BeforeEach(func() {
 			fake.TakesAParameter("you-bet-it-does")
+			fake.TakesAnInt(0)
+			fake.TakesAUint64(0)
 		})
 
 		It("allows you to verify that the correct arguments were passed in", func() {
 			Expect(fake).To(HaveReceived("TakesAParameter").With(Equal("you-bet-it-does")))
 			Expect(fake).ToNot(HaveReceived("TakesAParameter").With(Equal("whoops")))
+		})
+
+		It("defaults to Equal() when no matcher is provided", func() {
+			Expect(fake).To(HaveReceived("TakesAnInt").With(0))
+
+			Expect(fake).ToNot(HaveReceived("TakesAUint64").With(0))
+			Expect(fake).To(HaveReceived("TakesAUint64").With(uint64(0)))
 		})
 
 		Context("when too many arguments are provided", func() {

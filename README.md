@@ -11,7 +11,7 @@ e.g.:
 ```go
 myFake := new(FakeSomething)
 myFake.Something("arg1", 0)
-Expect(myFake).To(HaveReceived("Something").With(Equal("arg1")).ANdWith(BeEquivalentTo(0)))
+Expect(myFake).To(HaveReceived("Something").With(Equal("arg1")).AndWith(BeEquivalentTo(0)))
 ```
 
 This actually works with any object that implements an "invocation recording" interface.
@@ -22,7 +22,14 @@ type Recorder interface{
 }
 ```
 
-Requested Features 
+Implemented Features
+--------------------
+* one not need to specify a gomega matcher to check equality
+  - e.g.: these are equivalent:
+  - `Expect(myFake).To(HaveReceived("Something").With(Equal("arg1"), Equal(0)))`
+  - `Expect(myFake).To(HaveReceived("Something").With("arg1", 0))`
+
+Planned Features
 ------------------
 
 (These would be good for new contributors)
@@ -31,7 +38,3 @@ Requested Features
   - e.g.: `Expect(myFake).To(HaveReceived("Something").With(Equal("my-arg", Equal(0)))`
 * I should be able to specify a number of times a function was invoked
   - e.g.: `Expect(myFake).To(HaveReceived("Something").Times(1))`
-* I should not need to specify a gomega matcher if I just want to check equality
-  - e.g.: these should be equivalent:
-  - `Expect(myFake).To(HaveReceived("Something").With(Equal("arg1"), Equal(0)))`
-  - `Expect(myFake).To(HaveReceived("Something").With("arg1", 0))`

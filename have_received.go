@@ -2,6 +2,8 @@ package gcounterfeiter
 
 import (
 	"fmt"
+
+	"github.com/onsi/gomega"
 	"github.com/onsi/gomega/types"
 	"github.com/tjarratt/gcounterfeiter/invocations"
 )
@@ -30,10 +32,20 @@ func (m *haveReceivedMatcher) NegatedFailureMessage(interface{}) string {
 	return fmt.Sprintf("Expected to not have received '%s', but it was invoked %d times", m.functionToMatch, invocationCount)
 }
 
-func (m *haveReceivedMatcher) With(argumentMatcher types.GomegaMatcher) HaveReceivableMatcher {
+func (m *haveReceivedMatcher) With(matcherOrValue interface{}) HaveReceivableMatcher {
+	argumentMatcher := matcherOrWrapValueWithEqual(matcherOrValue)
 	return NewArgumentVerifyingMatcher(m, m.functionToMatch, argumentMatcher)
 }
 
-func (m *haveReceivedMatcher) AndWith(argumentMatcher types.GomegaMatcher) HaveReceivableMatcher {
+func (m *haveReceivedMatcher) AndWith(matcherOrValue interface{}) HaveReceivableMatcher {
+	argumentMatcher := matcherOrWrapValueWithEqual(matcherOrValue)
 	return NewArgumentVerifyingMatcher(m, m.functionToMatch, argumentMatcher)
+}
+
+func matcherOrWrapValueWithEqual(arg interface{}) types.GomegaMatcher {
+	if asMatcher, ok := arg.(types.GomegaMatcher); ok {
+		return asMatcher
+	} else {
+		return gomega.Equal(arg)
+	}
 }

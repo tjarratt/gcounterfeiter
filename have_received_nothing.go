@@ -2,8 +2,6 @@ package gcounterfeiter
 
 import (
 	"fmt"
-
-	"github.com/onsi/gomega/types"
 	"github.com/tjarratt/gcounterfeiter/invocations"
 )
 
@@ -30,11 +28,11 @@ func (m *haveReceivedNothingMatcher) NegatedFailureMessage(interface{}) string {
 	return "Expected to have received at least one invocation, but there were none"
 }
 
-func (m *haveReceivedNothingMatcher) With(argumentMatcher types.GomegaMatcher) HaveReceivableMatcher {
+func (m *haveReceivedNothingMatcher) With(_ interface{}) HaveReceivableMatcher {
 	return newUserDoneGoofedMatcher(incorrectHaveReceivedAndWithUsageMessage)
 }
 
-func (m *haveReceivedNothingMatcher) AndWith(argumentMatcher types.GomegaMatcher) HaveReceivableMatcher {
+func (m *haveReceivedNothingMatcher) AndWith(_ interface{}) HaveReceivableMatcher {
 	return newUserDoneGoofedMatcher(incorrectHaveReceivedAndWithUsageMessage)
 }
 

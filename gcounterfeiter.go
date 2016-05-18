@@ -21,6 +21,6 @@ func HaveReceived(args ...string) HaveReceivableMatcher {
 
 type HaveReceivableMatcher interface {
 	types.GomegaMatcher
-	With(types.GomegaMatcher) HaveReceivableMatcher
-	AndWith(types.GomegaMatcher) HaveReceivableMatcher
+	With(interface{}) HaveReceivableMatcher
+	AndWith(interface{}) HaveReceivableMatcher
 }

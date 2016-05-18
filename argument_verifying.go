@@ -72,12 +72,14 @@ func (m *argumentVerifyingMatcher) NegatedFailureMessage(interface{}) string {
 	return fmt.Sprintf("Expected to not receive '%s' (with exact argument matching)", m.functionToMatch)
 }
 
-func (m *argumentVerifyingMatcher) With(argumentMatcher types.GomegaMatcher) HaveReceivableMatcher {
+func (m *argumentVerifyingMatcher) With(matcherOrValue interface{}) HaveReceivableMatcher {
+	argumentMatcher := matcherOrWrapValueWithEqual(matcherOrValue)
 	m.argMatchers = append(m.argMatchers, argumentMatcher)
 	return m
 }
 
-func (m *argumentVerifyingMatcher) AndWith(argumentMatcher types.GomegaMatcher) HaveReceivableMatcher {
+func (m *argumentVerifyingMatcher) AndWith(matcherOrValue interface{}) HaveReceivableMatcher {
+	argumentMatcher := matcherOrWrapValueWithEqual(matcherOrValue)
 	m.argMatchers = append(m.argMatchers, argumentMatcher)
 	return m
 }
