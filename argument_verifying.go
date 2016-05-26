@@ -14,6 +14,7 @@ type argumentVerifyingMatcher struct {
 
 	expected invocations.Recorder
 
+	wasNotInvoked        bool
 	failedArgIndex       int
 	failedMatcherMessage string
 }
@@ -27,9 +28,10 @@ func NewArgumentVerifyingMatcher(baseMatcher types.GomegaMatcher, functionToMatc
 }
 
 func (m *argumentVerifyingMatcher) Match(expected interface{}) (bool, error) {
-	// FIXME :: this should probably combine matchers with AND
 	ok, err := m.baseMatcher.Match(expected)
 	if !ok || err != nil {
+		m.wasNotInvoked = true
+		m.failedMatcherMessage = m.baseMatcher.FailureMessage(expected)
 		return ok, err
 	}
 
@@ -41,6 +43,11 @@ func (m *argumentVerifyingMatcher) Match(expected interface{}) (bool, error) {
 	m.expected = fake
 
 	invocations := fake.Invocations()[m.functionToMatch]
+	if len(invocations) == 0 {
+		m.wasNotInvoked = true
+		return false, nil
+	}
+
 	for _, invocation := range invocations {
 		if len(invocation) > len(m.argMatchers) {
 			return false, fmt.Errorf("Too few arguments provided for '%s'. Expected %d but received %d", m.functionToMatch, len(invocation), len(m.argMatchers))
@@ -65,7 +72,15 @@ func (m *argumentVerifyingMatcher) Match(expected interface{}) (bool, error) {
 }
 
 func (m *argumentVerifyingMatcher) FailureMessage(interface{}) string {
-	return fmt.Sprintf(`Expected to receive '%s' (and it did!) but the %d argument failed to match:\n\t'%s'`, m.functionToMatch, m.failedArgIndex, m.failedMatcherMessage)
+	if m.wasNotInvoked {
+		return m.failedMatcherMessage
+	}
+
+	return fmt.Sprintf(`
+Expected to receive '%s' (and it did!) but the %d argument failed to match:
+
+'%s'
+`, m.functionToMatch, m.failedArgIndex, m.failedMatcherMessage)
 }
 
 func (m *argumentVerifyingMatcher) NegatedFailureMessage(interface{}) string {

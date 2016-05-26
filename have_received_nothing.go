@@ -2,6 +2,7 @@ package gcounterfeiter
 
 import (
 	"fmt"
+
 	"github.com/tjarratt/gcounterfeiter/invocations"
 )
 

@@ -127,7 +127,16 @@ var _ = Describe("HaveReceived", func() {
 			It("should tell the user which parameter failed to match", func() {
 				fake.TakesThreeParameters("a", "b", "whoops")
 				subject.Match(fake)
+
 				Expect(subject.FailureMessage(fake)).To(ContainSubstring("Expected to receive 'TakesThreeParameters' (and it did!) but the 3 argument failed to match"))
+			})
+
+			It("should tell the user when it wasn't invoked at all", func() {
+				subject.Match(fake)
+
+				Expect(subject.FailureMessage(fake)).To(
+					ContainSubstring("Expected to have received 'TakesThreeParameters', but it was not invoked"),
+				)
 			})
 		})
 	})
