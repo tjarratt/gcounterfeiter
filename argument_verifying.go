@@ -62,7 +62,7 @@ func (m *argumentVerifyingMatcher) Match(expected interface{}) (bool, error) {
 			ok, err := matcher.Match(arg)
 			if err != nil || !ok {
 				m.failedArgIndex = i + 1
-				m.failedMatcherMessage = matcher.FailureMessage(expected)
+				m.failedMatcherMessage = matcher.FailureMessage(arg)
 				return false, err
 			}
 		}
