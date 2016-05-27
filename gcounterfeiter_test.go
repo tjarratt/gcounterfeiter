@@ -59,6 +59,13 @@ var _ = Describe("HaveReceived", func() {
 			Expect(fake).To(HaveReceived("TakesAUint64").With(uint64(0)))
 		})
 
+		It("can match when the function was invoked multiple times", func() {
+			fake.TakesAParameter("but-will-it-blend?")
+			Expect(fake).To(HaveReceived("TakesAParameter").With("but-will-it-blend?"))
+			Expect(fake).To(HaveReceived("TakesAParameter").With("you-bet-it-does"))
+			Expect(fake).ToNot(HaveReceived("TakesAParameter").With("surely-you're-joking"))
+		})
+
 		Context("when too many arguments are provided", func() {
 			var subject types.GomegaMatcher
 

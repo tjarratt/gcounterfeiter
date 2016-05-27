@@ -48,6 +48,7 @@ func (m *argumentVerifyingMatcher) Match(expected interface{}) (bool, error) {
 		return false, nil
 	}
 
+	var matched bool
 	for _, invocation := range invocations {
 		if len(invocation) > len(m.argMatchers) {
 			return false, fmt.Errorf("Too few arguments provided for '%s'. Expected %d but received %d", m.functionToMatch, len(invocation), len(m.argMatchers))
@@ -56,19 +57,25 @@ func (m *argumentVerifyingMatcher) Match(expected interface{}) (bool, error) {
 			return false, fmt.Errorf("Too many arguments provided for '%s'. Expected %d but received %d", m.functionToMatch, len(invocation), len(m.argMatchers))
 		}
 
+		matched = true
+
 		for i, arg := range invocation {
 			matcher := m.argMatchers[i]
 
 			ok, err := matcher.Match(arg)
+			matched = matched && ok
 			if err != nil || !ok {
 				m.failedArgIndex = i + 1
 				m.failedMatcherMessage = matcher.FailureMessage(arg)
-				return false, err
 			}
+		}
+
+		if matched {
+			break
 		}
 	}
 
-	return true, nil
+	return matched, nil
 }
 
 func (m *argumentVerifyingMatcher) FailureMessage(interface{}) string {
