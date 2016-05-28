@@ -117,9 +117,10 @@ var _ = Describe("HaveReceived", func() {
 			})
 
 			It("should tell the user when nothing was expected, but a function was invoked", func() {
-				fake.Something()
-				subject.Match(fake)
-				Expect(subject.FailureMessage(fake)).To(ContainSubstring("to have received nothing, but it received 1 invocations"))
+				matched, err := subject.Match(fake)
+				Expect(matched).To(BeFalse())
+				Expect(err).ToNot(HaveOccurred())
+				Expect(subject.FailureMessage(fake)).To(ContainSubstring("to have received at least one invocation, but it received 0"))
 			})
 		})
 
@@ -171,9 +172,13 @@ var _ = Describe("HaveReceived", func() {
 				subject = HaveReceived()
 			})
 
-			It("should tell the user when a function was expected, but none were invoked", func() {
+			It("should tell the user when no invocations were expected, but some were invoked", func() {
+				fake.Something()
+				fake.Something()
+				fake.Something()
 				subject.Match(fake)
-				Expect(subject.NegatedFailureMessage(fake)).To(ContainSubstring("to have received at least one invocation, but there were none"))
+
+				Expect(subject.NegatedFailureMessage(fake)).To(ContainSubstring("to have received nothing, but there were 3 invocations"))
 			})
 		})
 

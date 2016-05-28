@@ -22,11 +22,11 @@ func (m *haveReceivedNothingMatcher) Match(expected interface{}) (bool, error) {
 }
 
 func (m *haveReceivedNothingMatcher) FailureMessage(interface{}) string {
-	return fmt.Sprintf("Expected to have received nothing, but it received %d invocations", invocations.CountTotalInvocations(m.expected.Invocations()))
+	return fmt.Sprintf("Expected to have received at least one invocation, but it received %d", invocations.CountTotalInvocations(m.expected.Invocations()))
 }
 
 func (m *haveReceivedNothingMatcher) NegatedFailureMessage(interface{}) string {
-	return "Expected to have received at least one invocation, but there were none"
+	return fmt.Sprintf("Expected to have received nothing, but there were %d invocations", invocations.CountTotalInvocations(m.expected.Invocations()))
 }
 
 func (m *haveReceivedNothingMatcher) With(_ interface{}) HaveReceivableMatcher {
