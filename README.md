@@ -1,3 +1,5 @@
+[![Go Report Card](https://goreportcard.com/badge/github.com/tjarratt/gcounterfeiter)](https://goreportcard.com/report/github.com/tjarratt/gcounterfeiter)
+
 Gomega Matchers for Counterfeiter
 =================================
 This package provides some helpful [Gomega](https://github.com/onsi/gomega) matchers that help you write effective assertions against [counterfeiter](https://github.com/maxbrunsfeld/counterfeiter) fakes.
