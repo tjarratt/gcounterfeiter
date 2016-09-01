@@ -19,11 +19,11 @@ type argumentVerifyingMatcher struct {
 	failedMatcherMessage string
 }
 
-func NewArgumentVerifyingMatcher(baseMatcher types.GomegaMatcher, functionToMatch string, argMatcher types.GomegaMatcher) *argumentVerifyingMatcher {
+func NewArgumentVerifyingMatcher(baseMatcher types.GomegaMatcher, functionToMatch string, argMatchers ...types.GomegaMatcher) *argumentVerifyingMatcher {
 	return &argumentVerifyingMatcher{
 		baseMatcher:     baseMatcher,
 		functionToMatch: functionToMatch,
-		argMatchers:     []types.GomegaMatcher{argMatcher},
+		argMatchers:     argMatchers,
 	}
 }
 
@@ -94,14 +94,14 @@ func (m *argumentVerifyingMatcher) NegatedFailureMessage(interface{}) string {
 	return fmt.Sprintf("Expected to not receive '%s' (with exact argument matching)", m.functionToMatch)
 }
 
-func (m *argumentVerifyingMatcher) With(matcherOrValue interface{}) HaveReceivableMatcher {
-	argumentMatcher := matcherOrWrapValueWithEqual(matcherOrValue)
-	m.argMatchers = append(m.argMatchers, argumentMatcher)
+func (m *argumentVerifyingMatcher) With(matchersOrValues ...interface{}) HaveReceivableMatcher {
+	for _, matcherOrValue := range matchersOrValues {
+		argumentMatcher := matcherOrWrapValueWithEqual(matcherOrValue)
+		m.argMatchers = append(m.argMatchers, argumentMatcher)
+	}
 	return m
 }
 
-func (m *argumentVerifyingMatcher) AndWith(matcherOrValue interface{}) HaveReceivableMatcher {
-	argumentMatcher := matcherOrWrapValueWithEqual(matcherOrValue)
-	m.argMatchers = append(m.argMatchers, argumentMatcher)
-	return m
+func (m *argumentVerifyingMatcher) AndWith(matchersOrValue ...interface{}) HaveReceivableMatcher {
+	return m.With(matchersOrValue...)
 }

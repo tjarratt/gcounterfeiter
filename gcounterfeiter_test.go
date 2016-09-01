@@ -66,6 +66,12 @@ var _ = Describe("HaveReceived", func() {
 			Expect(fake).ToNot(HaveReceived("TakesAParameter").With("surely-you're-joking"))
 		})
 
+		It("can match function invocations with multiple args when passed multiple matchers to With", func() {
+			fake.TakesThreeParameters("x", "y", "z")
+			Expect(fake).To(HaveReceived("TakesThreeParameters").
+				With(Equal("x"), Equal("y"), Equal("z")))
+		})
+
 		Context("when too many arguments are provided", func() {
 			var subject types.GomegaMatcher
 

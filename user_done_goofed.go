@@ -22,10 +22,10 @@ func (m *userDoneGoofedMatcher) NegatedFailureMessage(interface{}) string {
 	return ""
 }
 
-func (m *userDoneGoofedMatcher) With(_ interface{}) HaveReceivableMatcher {
+func (m *userDoneGoofedMatcher) With(_ ...interface{}) HaveReceivableMatcher {
 	return m
 }
 
-func (m *userDoneGoofedMatcher) AndWith(_ interface{}) HaveReceivableMatcher {
+func (m *userDoneGoofedMatcher) AndWith(_ ...interface{}) HaveReceivableMatcher {
 	return m
 }

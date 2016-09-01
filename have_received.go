@@ -32,14 +32,16 @@ func (m *haveReceivedMatcher) NegatedFailureMessage(interface{}) string {
 	return fmt.Sprintf("Expected to not have received '%s', but it was invoked %d times", m.functionToMatch, invocationCount)
 }
 
-func (m *haveReceivedMatcher) With(matcherOrValue interface{}) HaveReceivableMatcher {
-	argumentMatcher := matcherOrWrapValueWithEqual(matcherOrValue)
-	return NewArgumentVerifyingMatcher(m, m.functionToMatch, argumentMatcher)
+func (m *haveReceivedMatcher) With(matchersOrValues ...interface{}) HaveReceivableMatcher {
+	argumentMatchers := []types.GomegaMatcher{}
+	for _, matcherOrValue := range matchersOrValues {
+		argumentMatchers = append(argumentMatchers, matcherOrWrapValueWithEqual(matcherOrValue))
+	}
+	return NewArgumentVerifyingMatcher(m, m.functionToMatch, argumentMatchers...)
 }
 
-func (m *haveReceivedMatcher) AndWith(matcherOrValue interface{}) HaveReceivableMatcher {
-	argumentMatcher := matcherOrWrapValueWithEqual(matcherOrValue)
-	return NewArgumentVerifyingMatcher(m, m.functionToMatch, argumentMatcher)
+func (m *haveReceivedMatcher) AndWith(matchersOrValues ...interface{}) HaveReceivableMatcher {
+	return m.With(matchersOrValues)
 }
 
 func matcherOrWrapValueWithEqual(arg interface{}) types.GomegaMatcher {

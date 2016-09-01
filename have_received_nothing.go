@@ -29,11 +29,11 @@ func (m *haveReceivedNothingMatcher) NegatedFailureMessage(interface{}) string {
 	return fmt.Sprintf("Expected to have received nothing, but there were %d invocations", invocations.CountTotalInvocations(m.expected.Invocations()))
 }
 
-func (m *haveReceivedNothingMatcher) With(_ interface{}) HaveReceivableMatcher {
+func (m *haveReceivedNothingMatcher) With(_ ...interface{}) HaveReceivableMatcher {
 	return newUserDoneGoofedMatcher(incorrectHaveReceivedAndWithUsageMessage)
 }
 
-func (m *haveReceivedNothingMatcher) AndWith(_ interface{}) HaveReceivableMatcher {
+func (m *haveReceivedNothingMatcher) AndWith(_ ...interface{}) HaveReceivableMatcher {
 	return newUserDoneGoofedMatcher(incorrectHaveReceivedAndWithUsageMessage)
 }
 
